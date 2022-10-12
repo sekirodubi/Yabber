@@ -13,7 +13,7 @@ namespace Yabber
         static void Main(string[] args)
         {
 #if DEBUG
-            args = new string[] { @"G:\Steam\steamapps\common\ELDEN RING 1.06\Game\msg\engus\menu.msgbnd.dcx" };
+            args = new string[] { @"C:\Users\Nord\source\repos\CSharp\Yabber\Security Test\deep\folder\gameparam.parambnd"};
 #endif
             if (args.Length == 0)
             {
