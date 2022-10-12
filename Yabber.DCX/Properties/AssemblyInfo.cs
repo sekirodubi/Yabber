@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Yabber.DCX")]
+[assembly: AssemblyTitle("Yabber+.DCX")]
 [assembly: AssemblyDescription("Decompresses/recompresses DCX files.")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]

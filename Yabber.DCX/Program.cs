@@ -16,7 +16,7 @@ namespace Yabber
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Console.WriteLine(
                     $"{assembly.GetName().Name} {assembly.GetName().Version}\n\n" +
-                    "Yabber.DCX has no GUI.\n" +
+                    "Yabber+.DCX has no GUI.\n" +
                     "Drag and drop a DCX onto the exe to decompress it,\n" +
                     "or a decompressed file to recompress it.\n\n" +
                     "Press any key to exit."
@@ -42,7 +42,7 @@ namespace Yabber
                 }
                 catch (DllNotFoundException ex) when (ex.Message.Contains("oo2core_6_win64.dll"))
                 {
-                    Console.WriteLine("In order to decompress .dcx files from Sekiro, you must copy oo2core_6_win64.dll from Sekiro into Yabber's lib folder.");
+                    Console.WriteLine("In order to decompress .dcx files from games, starting with Sekiro, you must copy ANY oo2core_6_win64.dll into Yabber's lib folder from a game that has it (hint: Elden Ring).");
                     pause = true;
                 }
                 catch (UnauthorizedAccessException)

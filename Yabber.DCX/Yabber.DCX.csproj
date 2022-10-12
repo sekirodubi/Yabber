@@ -7,7 +7,7 @@
     <ProjectGuid>{3037F615-871F-4EDB-A170-CD57660A1C35}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Yabber.DCX</RootNamespace>
-    <AssemblyName>Yabber.DCX</AssemblyName>
+    <AssemblyName>Yabber+.DCX</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -11,8 +11,11 @@ namespace Yabber.Context
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             Console.Write(
+                "==========URGENT!==========" +
+                "NO idea what happens if you try to overwrite Yabber that is already registered" +
+                "Unregister, first, if you have the old yabber registered." +
                 $"{assembly.GetName().Name} {assembly.GetName().Version}\n\n" +
-                "This program will register Yabber.exe and Yabber.DCX.exe\n" +
+                "This program will register Yabber+.exe and Yabber+.DCX.exe\n" +
                 "so that they can be run by right-clicking on a file or folder.\n" +
                 "Enter R to register, U to unregister, or anything else to exit.\n" +
                 "> ");
@@ -26,7 +29,7 @@ namespace Yabber.Context
                     RegistryKey classes = Registry.CurrentUser.OpenSubKey("Software\\Classes", true);
                     if (choice == "R")
                     {
-                        string yabberPath = Path.GetFullPath("Yabber.exe");
+                        string yabberPath = Path.GetFullPath("Yabber+.exe");
                         RegistryKey yabberFileKey = classes.CreateSubKey("*\\shell\\yabber");
                         RegistryKey yabberFileCommand = yabberFileKey.CreateSubKey("command");
                         yabberFileKey.SetValue(null, "Yabber");
@@ -36,10 +39,10 @@ namespace Yabber.Context
                         yabberDirKey.SetValue(null, "Yabber");
                         yabberDirCommand.SetValue(null, $"\"{yabberPath}\" \"%1\"");
 
-                        string dcxPath = Path.GetFullPath("Yabber.DCX.exe");
+                        string dcxPath = Path.GetFullPath("Yabber+.DCX.exe");
                         RegistryKey dcxFileKey = classes.CreateSubKey("*\\shell\\yabberdcx");
                         RegistryKey dcxFileCommand = dcxFileKey.CreateSubKey("command");
-                        dcxFileKey.SetValue(null, "Yabber.DCX");
+                        dcxFileKey.SetValue(null, "Yabber+.DCX");
                         dcxFileCommand.SetValue(null, $"\"{dcxPath}\" \"%1\"");
 
                         Console.WriteLine("Programs registered!");

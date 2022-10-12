@@ -7,7 +7,7 @@
     <ProjectGuid>{A67A63D3-7C41-4127-93C9-F7C71471D26B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Yabber.Context</RootNamespace>
-    <AssemblyName>Yabber.Context</AssemblyName>
+    <AssemblyName>Yabber+.Context</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
