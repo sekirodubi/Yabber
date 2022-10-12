@@ -45,8 +45,9 @@ namespace Yabber
             string strBitBigEndian = xml.SelectSingleNode("bnd3/bitbigendian")?.InnerText ?? "False";
             string strUnk18 = xml.SelectSingleNode("bnd3/unk18")?.InnerText ?? "0x0";
 
-            if (!Enum.TryParse(strCompression, out bnd.Compression))
+            if (!Enum.TryParse(strCompression, out DCX.Type compression))
                 throw new FriendlyException($"Could not parse compression type: {strCompression}");
+            bnd.Compression = compression;
 
             try
             {

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO.Compression;
 using System.Linq;
 using System.Numerics;
 using System.Xml;
@@ -112,7 +113,8 @@ namespace Yabber
             var gparam = new GPARAM();
             var xml = new XmlDocument();
             xml.Load(sourceFile);
-            Enum.TryParse(xml.SelectSingleNode("gparam/compression")?.InnerText ?? "None", out gparam.Compression);
+            Enum.TryParse(xml.SelectSingleNode("gparam/compression")?.InnerText ?? "None", out DCX.Type compression);
+            gparam.Compression = compression;
             Enum.TryParse(xml.SelectSingleNode("gparam/game").InnerText, out gparam.Game);
             gparam.Unk0D = bool.Parse(xml.SelectSingleNode("gparam/unk0D").InnerText);
             gparam.Unk14 = int.Parse(xml.SelectSingleNode("gparam/unk14").InnerText);

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using SoulsFormats;
 
 namespace Yabber
 {
@@ -49,6 +51,7 @@ namespace Yabber
         };
 
         private static readonly Regex DriveRx = new Regex(@"^(\w\:\\)(.+)$");
+        private static readonly Regex TraversalRx = new Regex(@"([..\\]+)(.+)");
         private static readonly Regex SlashRx = new Regex(@"^(\\+)(.+)$");
 
         /// <summary>
@@ -73,12 +76,20 @@ namespace Yabber
                 root = drive.Groups[1].Value;
                 path = drive.Groups[2].Value;
             }
+            
+            Match traversal = TraversalRx.Match(path);
+            if (traversal.Success)
+            {
+                root += traversal.Groups[1].Value;
+                path = traversal.Groups[2].Value;
+            }
 
             return RemoveLeadingBackslashes(path, ref root);
         }
 
         private static string RemoveLeadingBackslashes(string path, ref string root)
         {
+
             Match slash = SlashRx.Match(path);
             if (slash.Success)
             {
@@ -92,6 +103,27 @@ namespace Yabber
         {
             if (File.Exists(path) && !File.Exists(path + ".bak"))
                 File.Move(path, path + ".bak");
+        }
+
+        private static byte[] ds2RegulationKey = { 0x40, 0x17, 0x81, 0x30, 0xDF, 0x0A, 0x94, 0x54, 0x33, 0x09, 0xE1, 0x71, 0xEC, 0xBF, 0x25, 0x4C };
+
+        /// <summary>
+        /// Decrypts and unpacks DS2's regulation BND4 from the specified path.
+        /// </summary>
+        public static BND4 DecryptDS2Regulation(string path)
+        {
+            byte[] bytes = File.ReadAllBytes(path);
+            byte[] iv = new byte[16];
+            iv[0] = 0x80;
+            Array.Copy(bytes, 0, iv, 1, 11);
+            iv[15] = 1;
+            byte[] input = new byte[bytes.Length - 32];
+            Array.Copy(bytes, 32, input, 0, bytes.Length - 32);
+            using (var ms = new MemoryStream(input))
+            {
+                byte[] decrypted = CryptographyUtil.DecryptAesCtr(ms, ds2RegulationKey, iv);
+                return BND4.Read(decrypted);
+            }
         }
     }
 }
