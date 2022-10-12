@@ -36,7 +36,7 @@ namespace Yabber.Context
                         yabberFileCommand.SetValue(null, $"\"{yabberPath}\" \"%1\"");
                         RegistryKey yabberDirKey = classes.CreateSubKey("directory\\shell\\yabber");
                         RegistryKey yabberDirCommand = yabberDirKey.CreateSubKey("command");
-                        yabberDirKey.SetValue(null, "Yabber");
+                        yabberDirKey.SetValue(null, "Yabber+");
                         yabberDirCommand.SetValue(null, $"\"{yabberPath}\" \"%1\"");
 
                         string dcxPath = Path.GetFullPath("Yabber+.DCX.exe");

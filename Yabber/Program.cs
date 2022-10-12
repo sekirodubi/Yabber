@@ -349,11 +349,17 @@ namespace Yabber
             if (fileName.Contains("Data0"))
             {
                 string destPath = Path.Combine(sourceDir, "Data0.bdt");
-                BND4 bnd = SFUtil.DecryptDS3Regulation(destPath);
-                Console.WriteLine($"Unpacking DS3 Regulation Bin: {fileName}...");
-                using (var bndReader = new BND4Reader(bnd.Write()))
+                try 
                 {
-                    bndReader.Unpack(fileName, targetDir, progress);
+                    BND4 bnd = SFUtil.DecryptDS3Regulation(destPath);
+                    Console.WriteLine($"Unpacking DS3 Regulation Bin: {fileName}...");
+                    using (var bndReader = new BND4Reader(bnd.Write())) {
+                        bndReader.Unpack(fileName, targetDir, progress);
+                    }
+                    
+                } catch (Exception e) 
+                {
+                    
                 }
 
                 return false;
@@ -374,13 +380,27 @@ namespace Yabber
 
             throw new InvalidOperationException("This state is unreachable. Please contact Nordgaren about this regulation.bin.");
         }
+        
+        public static bool Confirm(string message)
+        {
+            ConsoleKey response;
+            do
+            {
+                Console.Write($"{message} [y/n] ");
+                response = Console.ReadKey(false).Key;
+                if (response != ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                }
+            } while (response != ConsoleKey.Y && response != ConsoleKey.N);
+
+            return (response == ConsoleKey.Y);
+        }
 
         private static bool RepackDir(string sourceDir, IProgress<float> progress)
         {
             string sourceName = new DirectoryInfo(sourceDir).Name;
             string targetDir = new DirectoryInfo(sourceDir).Parent.FullName;
-
-
 
 
             if (File.Exists($"{sourceDir}\\_yabber-bnd3.xml"))
@@ -444,6 +464,10 @@ namespace Yabber
 
             if (sourceName.Contains("enc_regulation.bnd.dcx"))
             {
+                if (!Confirm("DS2 files cannot be re-encrypted, yet, so re-packing this folder might ruin your encrypted bnd.")) {
+                    return false;
+                }
+                
                 string destPath = Path.Combine(sourceDir, sourceName);
                 BND4 bnd = BND4.Read(destPath);//YBUtil.DecryptDS2Regulation(destPath); I will have to investigate re-encrypting DS2 regulation later.  
                 Console.WriteLine($"Repacking DS2 Regulation Bin: {sourceName}...");

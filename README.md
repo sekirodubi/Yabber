@@ -1,18 +1,25 @@
-# Yabber
-An unpacker/repacker for common Demon's Souls, Dark Souls 1-3, Bloodborne, and Sekiro file formats. Supports .bnd, .bhd/.bdt, .dcx, .fltparam, .fmg, .gparam, .luagnl, .luainfo, and .tpf.  
-In order to decompress Sekiro files you must copy oo2core_6_win64.dll from Sekiro into Yabber's lib folder.  
+# Yabber+
+An unpacker/repacker for common Demon's Souls, Dark Souls 1-3, Bloodborne, Sekiro, Elden Ring file formats. Supports .bnd, .bhd/.bdt, .dcx, .fltparam, .fmg, .gparam, .luagnl, .luainfo, and .tpf.  
+In order to decompress .dcx files from games, starting with Sekiro, you must copy ANY oo2core_6_win64.dll into Yabber's lib folder from a game that has it (hint: Elden Ring).   
 Does not support dvdbnds (the very large bhd/bdt pairs in the main game directory); use [UDSFM](https://www.nexusmods.com/darksouls/mods/1304) or [UXM](https://www.nexusmods.com/sekiro/mods/26) to unpack those first.  
-Also does not support encrypted files (enc_regulation.bnd.dcx in DS2, Data0.bdt in DS3); you can edit these with [Yapped](https://www.nexusmods.com/darksouls3/mods/306) or unpack them with [BinderTool](https://github.com/Atvaark/BinderTool).  
 Requires [.NET 4.7.2](https://www.microsoft.com/net/download/thank-you/net472) - Windows 10 users should already have this.  
 [NexusMods Page](https://www.nexusmods.com/sekiro/mods/42)  
 
-Please see the included readme for detailed instructions.
+Please see the included readme for detailed instructions.  
 
 # Contributors
 *katalash* - GPARAM support  
-*TKGP* - Everything else
+*TKGP* - Everything else  
+*Nordgaren* - Yabber+ additions  
 
 # Changelog
+### 1.0  
+* Added support for unpacking and repacking encrypted regulation BNDs  
+* Updated oodle message to instruct users to get the file from Sekiro or Elden Ring  
+* Fixed issue with files being written to incorrect folder, due to path traversal  
+* There are some fixes and upgrades that were commited by TK before I ever looked at the project, that are in this build as well  
+
+# Old Yabber Changelog
 ### 1.3.1
 * DS2 .fltparams are now supported
 * BXF4 repacking fixed
