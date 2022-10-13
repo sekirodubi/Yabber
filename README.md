@@ -13,6 +13,11 @@ Please see the included readme for detailed instructions.
 *Nordgaren* - Yabber+ additions  
 
 # Changelog
+### 1.0.1 
+* Minor fix to the Context menu registry (correct names)  
+* Made it impossible to use multiple `..\` in a file path
+* Updated version properly  
+
 ### 1.0  
 * Added support for unpacking and repacking encrypted regulation BNDs  
 * Updated oodle message to instruct users to get the file from Sekiro or Elden Ring  
