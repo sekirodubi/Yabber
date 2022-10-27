@@ -1,6 +1,7 @@
 ﻿using SoulsFormats;
 using SoulsFormats.AC4;
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -13,7 +14,7 @@ namespace Yabber
         static void Main(string[] args)
         {
 #if DEBUG
-            args = new string[] { @"C:\Users\Nord\source\repos\CSharp\Yabber\Security Test\deep\folder\gameparam.parambnd"};
+            args = new string[] { @"G:\Steam\steamapps\common\ELDEN RING 1.07\Game\parts\am_f_1540.partsbnd.dcx" };
 #endif
             if (args.Length == 0)
             {
@@ -142,7 +143,8 @@ namespace Yabber
             if (DCX.Is(sourceFile))
             {
                 Console.WriteLine($"Decompressing DCX: {fileName}...");
-                byte[] bytes = DCX.Decompress(sourceFile, out DCX.Type compression);
+                byte[] bytes = TryDecompressBytes(sourceFile, out DCX.Type compression);
+
                 if (BND3.Is(bytes))
                 {
                     Console.WriteLine($"Unpacking BND3: {fileName}...");
@@ -280,8 +282,8 @@ namespace Yabber
                     gparam.Unpack(sourceFile);
                 }
                 else if (sourceFile.EndsWith(".gparam.xml") || sourceFile.EndsWith(".gparam.dcx.xml")
-                                                            || sourceFile.EndsWith(".fltparam.xml") ||
-                                                            sourceFile.EndsWith(".fltparam.dcx.xml"))
+                    || sourceFile.EndsWith(".fltparam.xml") ||
+                    sourceFile.EndsWith(".fltparam.dcx.xml"))
                 {
                     Console.WriteLine($"Repacking GPARAM: {fileName}...");
                     YGPARAM.Repack(sourceFile);
@@ -329,6 +331,24 @@ namespace Yabber
 
             return false;
         }
+        private static byte[] TryDecompressBytes(string sourceFile, out DCX.Type compression)
+        {
+            try
+            {
+                return DCX.Decompress(sourceFile, out compression);
+            }
+            catch (DllNotFoundException ex) when (ex.Message.Contains("oo2core_6_win64.dll"))
+            {
+                string oo2corePath = YBUtil.GetOodlePath();
+                if (oo2corePath == null)
+                    throw;
+
+                IntPtr handle = Kernel32.LoadLibrary(oo2corePath);
+                byte[] bytes = DCX.Decompress(sourceFile, out compression);
+                Kernel32.FreeLibrary(handle);
+                return bytes;
+            }
+        }
 
         private static bool UnpackRegulationFile(string fileName, string sourceDir, string targetDir, IProgress<float> progress)
         {
@@ -349,18 +369,12 @@ namespace Yabber
             if (fileName.Contains("Data0"))
             {
                 string destPath = Path.Combine(sourceDir, "Data0.bdt");
-                try 
-                {
                     BND4 bnd = SFUtil.DecryptDS3Regulation(destPath);
                     Console.WriteLine($"Unpacking DS3 Regulation Bin: {fileName}...");
-                    using (var bndReader = new BND4Reader(bnd.Write())) {
+                    using (var bndReader = new BND4Reader(bnd.Write()))
+                    {
                         bndReader.Unpack(fileName, targetDir, progress);
                     }
-                    
-                } catch (Exception e) 
-                {
-                    
-                }
 
                 return false;
             }
@@ -369,7 +383,8 @@ namespace Yabber
             {
                 string destPath = Path.Combine(sourceDir, fileName);
                 BND4 bnd;
-                if (!BND4.IsRead(destPath, out bnd)) {
+                if (!BND4.IsRead(destPath, out bnd))
+                {
                     bnd = YBUtil.DecryptDS2Regulation(destPath);
                 }
 
@@ -384,7 +399,7 @@ namespace Yabber
 
             throw new InvalidOperationException("This state is unreachable. Please contact Nordgaren about this regulation.bin.");
         }
-        
+
         public static bool Confirm(string message)
         {
             ConsoleKey response;
@@ -468,10 +483,11 @@ namespace Yabber
 
             if (sourceName.Contains("enc_regulation.bnd.dcx"))
             {
-                if (!Confirm("DS2 files cannot be re-encrypted, yet, so re-packing this folder might ruin your encrypted bnd.")) {
+                if (!Confirm("DS2 files cannot be re-encrypted, yet, so re-packing this folder might ruin your encrypted bnd."))
+                {
                     return false;
                 }
-                
+
                 string destPath = Path.Combine(sourceDir, sourceName);
                 BND4
                     bnd = BND4.Read(
@@ -482,7 +498,7 @@ namespace Yabber
             }
 
             throw new InvalidOperationException("This state is unreachable. If your regulation bin is named correctly, please contact Nordgaren about this regulation.bin. Otherwise" +
-                                                "make sure your bnd contains the original bnd name.");
+                "make sure your bnd contains the original bnd name.");
         }
     }
 }

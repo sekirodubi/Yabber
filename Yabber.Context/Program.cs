@@ -22,7 +22,7 @@ namespace Yabber.Context
             string choice = Console.ReadLine().ToUpper();
             Console.WriteLine();
 
-            if (choice == "R" || choice == "U")
+            if (choice == "R" || choice == "U" || choice == "L")
             {
                 try
                 {
@@ -53,6 +53,10 @@ namespace Yabber.Context
                         classes.DeleteSubKeyTree("directory\\shell\\yabber", false);
                         classes.DeleteSubKeyTree("*\\shell\\yabberdcx", false);
                         Console.WriteLine("Programs unregistered.");
+                    }
+                    else if (choice == "L") 
+                    {
+                        //MultipleInvokePromptMinimum
                     }
                 }
                 catch (Exception ex)
