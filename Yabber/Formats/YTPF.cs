@@ -9,11 +9,14 @@ namespace Yabber
     {
         public static void Unpack(this TPF tpf, string sourceName, string targetDir, IProgress<float> progress)
         {
-#if !DEBUG
+//#if !DEBUG
+            // if (tpf.Platform != TPF.TPFPlatform.PC)
+            //     throw new NotSupportedException("Yabber does not support console TPFs at the moment.");
+//#endif
             if (tpf.Platform != TPF.TPFPlatform.PC)
-                throw new NotSupportedException("Yabber does not support console TPFs at the moment.");
-#endif
-
+                Console.WriteLine("Yabber only officially supports PC TPFs, at the moment. Unpacking other TPFs, such as console TPFs" +
+                                  "may cause issues. Results may not be perfect. Repacking is not supported, yet.  ");
+                
             Directory.CreateDirectory(targetDir);
             var xws = new XmlWriterSettings();
             xws.Indent = true;

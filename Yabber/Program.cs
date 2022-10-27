@@ -368,7 +368,11 @@ namespace Yabber
             if (fileName.Contains("enc_regulation.bnd.dcx"))
             {
                 string destPath = Path.Combine(sourceDir, fileName);
-                BND4 bnd = YBUtil.DecryptDS2Regulation(destPath);
+                BND4 bnd;
+                if (!BND4.IsRead(destPath, out bnd)) {
+                    bnd = YBUtil.DecryptDS2Regulation(destPath);
+                }
+
                 Console.WriteLine($"Unpacking DS2 Regulation Bin: {fileName}...");
                 using (var bndReader = new BND4Reader(bnd.Write()))
                 {
@@ -469,7 +473,9 @@ namespace Yabber
                 }
                 
                 string destPath = Path.Combine(sourceDir, sourceName);
-                BND4 bnd = BND4.Read(destPath);//YBUtil.DecryptDS2Regulation(destPath); I will have to investigate re-encrypting DS2 regulation later.  
+                BND4
+                    bnd = BND4.Read(
+                        destPath); //YBUtil.DecryptDS2Regulation(destPath); I will have to investigate re-encrypting DS2 regulation later.  
                 Console.WriteLine($"Repacking DS2 Regulation Bin: {sourceName}...");
                 YBND4.Repack(sourceDir, targetDir);
                 return false;

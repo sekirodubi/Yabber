@@ -42,7 +42,7 @@ namespace Yabber
                 }
                 catch (DllNotFoundException ex) when (ex.Message.Contains("oo2core_6_win64.dll"))
                 {
-                    Console.WriteLine("In order to decompress .dcx files from games, starting with Sekiro, you must copy ANY oo2core_6_win64.dll into Yabber's lib folder from a game that has it (hint: Elden Ring).");
+                    Console.WriteLine("In order to decompress .dcx files from games, starting from Sekiro, you must copy ANY oo2core_6_win64.dll into Yabber's lib folder from a game that has it (hint: Elden Ring).");
                     pause = true;
                 }
                 catch (UnauthorizedAccessException)
