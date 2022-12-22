@@ -14,7 +14,7 @@ namespace Yabber
         static void Main(string[] args)
         {
 #if DEBUG
-            args = new string[] { @"G:\Steam\steamapps\common\ELDEN RING 1.07\Game\parts\am_f_1540.partsbnd.dcx" };
+            args = new string[] { @"C:\Users\Nord\Downloads\m12_01_00_00_GIIV0053_00_W.tpf" };
 #endif
             if (args.Length == 0)
             {

@@ -53,7 +53,7 @@ namespace Yabber
         };
 
         private static readonly Regex DriveRx = new Regex(@"^(\w\:\\)(.+)$");
-        private static readonly Regex TraversalRx = new Regex(@"^([..\\]+)(.+)$");
+        private static readonly Regex TraversalRx = new Regex(@"^([(..)\\\/]+)(.+)?$");
         private static readonly Regex SlashRx = new Regex(@"^(\\+)(.+)$");
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Yabber
                 root += traversal.Groups[1].Value;
                 path = traversal.Groups[2].Value;
             }
-            if (path.Contains("..\\")) throw new InvalidDataException($"the path {path} contains invalid data. Please report this bnd to someone on ?ServerName?");
+            if (path.Contains("..\\") || path.Contains("../")) throw new InvalidDataException($"the path {path} contains invalid data, attempting to extract to a different folder. Please report this bnd to Nordgaren.");
             return RemoveLeadingBackslashes(path, ref root);
         }
 
