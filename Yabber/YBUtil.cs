@@ -155,11 +155,11 @@ namespace Yabber
                     continue;
 
                 string[] split = line.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
-                string libpath = split.FirstOrDefault(x => x.ToLower().Contains("steam")).Replace("\"", "").Replace("\\\\", "\\");
-                string libraryPath = libpath + gamePath;
+                string libPath = split.FirstOrDefault(x => x.ToLower().Contains("steam")).Replace("\"", "").Replace("\\\\", "\\");
+                string libraryPath = libPath + gamePath;
 
                 if (File.Exists(libraryPath))
-                    return libraryPath.Replace("\\\\", "\\");
+                    return libraryPath;
             }
 
             return null;
