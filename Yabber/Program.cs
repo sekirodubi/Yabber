@@ -13,9 +13,6 @@ namespace Yabber
     {
         static void Main(string[] args)
         {
-#if DEBUG
-            args = new string[] { @"C:\Users\Nord\Downloads\m12_01_00_00_GIIV0053_00_W.tpf" };
-#endif
             if (args.Length == 0)
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -137,8 +134,6 @@ namespace Yabber
 
             if (fileName.Contains("regulation.bnd.dcx") || fileName.Contains("Data0") || fileName.Contains("regulation.bin") || fileName.Contains("regulation.bnd"))
                 return UnpackRegulationFile(fileName, sourceDir, targetDir, progress);
-
-
 
             if (DCX.Is(sourceFile))
             {

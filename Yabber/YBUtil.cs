@@ -138,8 +138,8 @@ namespace Yabber
 
         public static string TryGetGameInstallLocation(string gamePath)
         {
-            if (!gamePath.Contains("{0}"))
-                return gamePath;
+            if (!gamePath.StartsWith("\\") && !gamePath.StartsWith("/"))
+                return null;
 
             string steamPath = GetSteamInstallPath();
 
@@ -147,7 +147,7 @@ namespace Yabber
                 return null;
 
             string[] libraryFolders = File.ReadAllLines($@"{steamPath}/SteamApps/libraryfolders.vdf");
-            char[] seperator = new char[] { '\t' };
+            char[] seperator = { '\t' };
 
             foreach (string line in libraryFolders)
             {
@@ -155,7 +155,8 @@ namespace Yabber
                     continue;
 
                 string[] split = line.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
-                string libraryPath = string.Format(gamePath, split.FirstOrDefault(x => x.ToLower().Contains("steam")).Replace("\"", ""));
+                string libpath = split.FirstOrDefault(x => x.ToLower().Contains("steam")).Replace("\"", "").Replace("\\\\", "\\");
+                string libraryPath = libpath + gamePath;
 
                 if (File.Exists(libraryPath))
                     return libraryPath.Replace("\\\\", "\\");
@@ -187,15 +188,13 @@ namespace Yabber
         };
         public static string GetOodlePath()
         {
-            string installPath = GetSteamInstallPath();
-
             foreach (string game in OodleGames) {
-                string path = TryGetGameInstallLocation($"{{0}}\\steamapps\\common\\{game}\\Game\\oo2core_6_win64.dll");
+                string path = TryGetGameInstallLocation($"\\steamapps\\common\\{game}\\Game\\oo2core_6_win64.dll");
                 if (path != null) 
                     return path;
             }
 
-            return installPath;
+            return null;
         }
 
     }
