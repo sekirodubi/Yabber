@@ -35,12 +35,14 @@ namespace Yabber
 
             string bhdFilename = xml.SelectSingleNode("bxf3/bhd_filename").InnerText;
             string bdtFilename = xml.SelectSingleNode("bxf3/bdt_filename").InnerText;
+            string root = xml.SelectSingleNode("bxf3/root").InnerText ?? "";
+
             bxf.Version = xml.SelectSingleNode("bxf3/version").InnerText;
             bxf.Format = (Binder.Format)Enum.Parse(typeof(Binder.Format), xml.SelectSingleNode("bxf3/format").InnerText);
             bxf.BigEndian = bool.Parse(xml.SelectSingleNode("bxf3/bigendian").InnerText);
             bxf.BitBigEndian = bool.Parse(xml.SelectSingleNode("bxf3/bitbigendian").InnerText);
 
-            YBinder.ReadBinderFiles(bxf, xml.SelectSingleNode("bxf3/files"), sourceDir);
+            YBinder.ReadBinderFiles(bxf, xml.SelectSingleNode("bxf3/files"), sourceDir, root);
 
             string bhdPath = $"{targetDir}\\{bhdFilename}";
             YBUtil.Backup(bhdPath);

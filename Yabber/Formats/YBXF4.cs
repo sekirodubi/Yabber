@@ -39,6 +39,8 @@ namespace Yabber
 
             string bhdFilename = xml.SelectSingleNode("bxf4/bhd_filename").InnerText;
             string bdtFilename = xml.SelectSingleNode("bxf4/bdt_filename").InnerText;
+            string root = xml.SelectSingleNode("bx4/root").InnerText;
+
             bxf.Version = xml.SelectSingleNode("bxf4/version").InnerText;
             bxf.Format = (Binder.Format)Enum.Parse(typeof(Binder.Format), xml.SelectSingleNode("bxf4/format").InnerText);
             bxf.BigEndian = bool.Parse(xml.SelectSingleNode("bxf4/bigendian").InnerText);
@@ -48,7 +50,7 @@ namespace Yabber
             bxf.Unk04 = bool.Parse(xml.SelectSingleNode("bxf4/unk04").InnerText);
             bxf.Unk05 = bool.Parse(xml.SelectSingleNode("bxf4/unk05").InnerText);
 
-            YBinder.ReadBinderFiles(bxf, xml.SelectSingleNode("bxf4/files"), sourceDir);
+            YBinder.ReadBinderFiles(bxf, xml.SelectSingleNode("bxf4/files"), sourceDir, root);
 
             string bhdPath = $"{targetDir}\\{bhdFilename}";
             YBUtil.Backup(bhdPath);

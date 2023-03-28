@@ -48,7 +48,10 @@ namespace Yabber
             bnd.Extended = Convert.ToByte(xml.SelectSingleNode("bnd4/extended").InnerText, 16);
             bnd.Unk04 = bool.Parse(xml.SelectSingleNode("bnd4/unk04").InnerText);
             bnd.Unk05 = bool.Parse(xml.SelectSingleNode("bnd4/unk05").InnerText);
-            YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd4/files"), sourceDir);
+
+            var root = xml.SelectSingleNode("bnd4/root").InnerText ?? "";
+
+            YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd4/files"), sourceDir, root);
 
             string outPath = $"{targetDir}\\{filename}";
             YBUtil.Backup(outPath);
