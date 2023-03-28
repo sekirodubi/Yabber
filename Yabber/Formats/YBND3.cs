@@ -38,13 +38,14 @@ namespace Yabber
                 throw new FriendlyException("Missing filename tag.");
 
             string filename = xml.SelectSingleNode("bnd3/filename").InnerText;
+            string root = xml.SelectSingleNode("bnd3/root")?.InnerText ?? "";
+
             string strCompression = xml.SelectSingleNode("bnd3/compression")?.InnerText ?? "None";
             bnd.Version = xml.SelectSingleNode("bnd3/version")?.InnerText ?? "07D7R6";
             string strFormat = xml.SelectSingleNode("bnd3/format")?.InnerText ?? "IDs, Names1, Names2, Compression";
             string strBigEndian = xml.SelectSingleNode("bnd3/bigendian")?.InnerText ?? "False";
             string strBitBigEndian = xml.SelectSingleNode("bnd3/bitbigendian")?.InnerText ?? "False";
             string strUnk18 = xml.SelectSingleNode("bnd3/unk18")?.InnerText ?? "0x0";
-            string strRoot = xml.SelectSingleNode("bnd3/root")?.InnerText ?? "";
 
             if (!Enum.TryParse(strCompression, out DCX.Type compression))
                 throw new FriendlyException($"Could not parse compression type: {strCompression}");
@@ -77,7 +78,7 @@ namespace Yabber
             }
 
             if (xml.SelectSingleNode("bnd3/files") != null)
-                YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd3/files"), sourceDir, strRoot);
+                YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd3/files"), sourceDir, root);
 
             string outPath = $"{targetDir}\\{filename}";
             YBUtil.Backup(outPath);

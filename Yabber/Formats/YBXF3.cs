@@ -35,7 +35,7 @@ namespace Yabber
 
             string bhdFilename = xml.SelectSingleNode("bxf3/bhd_filename").InnerText;
             string bdtFilename = xml.SelectSingleNode("bxf3/bdt_filename").InnerText;
-            string root = xml.SelectSingleNode("bxf3/root").InnerText ?? "";
+            string root = xml.SelectSingleNode("bxf3/root")?.InnerText ?? "";
 
             bxf.Version = xml.SelectSingleNode("bxf3/version").InnerText;
             bxf.Format = (Binder.Format)Enum.Parse(typeof(Binder.Format), xml.SelectSingleNode("bxf3/format").InnerText);

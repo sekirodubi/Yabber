@@ -37,7 +37,7 @@ namespace Yabber
             xml.Load($"{sourceDir}\\_yabber-bnd4.xml");
 
             string filename = xml.SelectSingleNode("bnd4/filename").InnerText;
-            var root = xml.SelectSingleNode("bnd4/root").InnerText ?? "";
+            var root = xml.SelectSingleNode("bnd4/root")?.InnerText ?? "";
 
             Enum.TryParse(xml.SelectSingleNode("bnd4/compression")?.InnerText ?? "None", out DCX.Type compression);
             bnd.Compression = compression;
