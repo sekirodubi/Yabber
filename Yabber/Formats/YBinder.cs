@@ -11,24 +11,18 @@ namespace Yabber
     {
         public static void WriteBinderFiles(BinderReader bnd, XmlWriter xw, string targetDir, IProgress<float> progress)
         {
+
             string root = "";
             if (Binder.HasNames(bnd.Format))
             {
+                root = YBUtil.FindCommonRootPath(bnd.Files.Select(bndFile => bndFile.Name));
+
                 // Find the shared root path
-                var paths = bnd.Files.Select(bndFile => bndFile.Name);
-
-                var rootPath = new string(
-                    paths.First().Substring(0, paths.Min(s => s.Length))
-                        .TakeWhile((c, i) => paths.All(s => s[i] == c)).ToArray());
-
-                var rootPathIndex = Math.Max(rootPath.LastIndexOf('\\'), rootPath.LastIndexOf('/'));
-
-                if (rootPath != "" && rootPathIndex != -1)
+                if (root != "")
                 {
-                    // We do be havin a shared root path
-                    root = rootPath.Substring(0, rootPathIndex);
                     xw.WriteElementString("root", root+"\\");
                 }
+
             }
 
             xw.WriteStartElement("files");
