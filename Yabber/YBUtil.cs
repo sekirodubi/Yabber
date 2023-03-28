@@ -14,6 +14,10 @@ namespace Yabber
         private static readonly Regex TraversalRx = new Regex(@"^([(..)\\\/]+)(.+)?$");
         private static readonly Regex SlashRx = new Regex(@"^(\\+)(.+)$");
 
+
+        /// <summary>
+        /// Finds common path prefix in a list of strings.
+        /// </summary>
         public static string FindCommonRootPath(IEnumerable<string> paths)
         {
             string root = "";
@@ -22,11 +26,11 @@ namespace Yabber
                 paths.First().Substring(0, paths.Min(s => s.Length))
                     .TakeWhile((c, i) => paths.All(s => s[i] == c)).ToArray());
 
+            // For safety, truncate this shared string down to the last slash/backslash.
             var rootPathIndex = Math.Max(rootPath.LastIndexOf('\\'), rootPath.LastIndexOf('/'));
 
             if (rootPath != "" && rootPathIndex != -1)
             {
-                // A shared root path exists; write it into the XML and use it for paths.
                 root = rootPath.Substring(0, rootPathIndex);
             }
 

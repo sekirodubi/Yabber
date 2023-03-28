@@ -17,9 +17,9 @@ namespace Yabber
             {
                 root = YBUtil.FindCommonRootPath(bnd.Files.Select(bndFile => bndFile.Name));
 
-                // Find the shared root path
                 if (root != "")
                 {
+                    // If there is a common root path, add it to the XML so it can be used in repacking.
                     xw.WriteElementString("root", root+"\\");
                 }
 
