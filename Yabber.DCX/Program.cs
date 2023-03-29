@@ -25,7 +25,8 @@ namespace Yabber
                 return;
             }
 
-            bool pause = false;
+            bool error = false;
+            int errorcode = 0;
 
             foreach (string path in args)
             {
@@ -33,17 +34,19 @@ namespace Yabber
                 {
                     if (DCX.Is(path))
                     {
-                        pause |= Decompress(path);
+                        error |= Decompress(path);
                     }
                     else
                     {
-                        pause |= Compress(path);
+                        error |= Compress(path);
                     }
                 }
                 catch (DllNotFoundException ex) when (ex.Message.Contains("oo2core_6_win64.dll"))
                 {
-                    Console.WriteLine("In order to decompress .dcx files from games, starting from Sekiro, you must copy ANY oo2core_6_win64.dll into Yabber's lib folder from a game that has it (hint: Elden Ring).");
-                    pause = true;
+                    Console.Error.WriteLine(
+                        "ERROR: oo2core_6_win64.dll not found. Please copy this library from the game directory to Yabber's directory.");
+                    errorcode = 3;
+                    error = true;
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -60,17 +63,20 @@ namespace Yabber
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Unhandled exception: {ex}");
-                    pause = true;
+                    Console.WriteLine();
+                    Console.Error.WriteLine($"ERROR: Unhandled exception: {ex}");
+                    errorcode = 1;
+                    error = true;
                 }
 
                 Console.WriteLine();
             }
 
-            if (pause)
+            if (error)
             {
                 Console.WriteLine("One or more errors were encountered and displayed above.\nPress any key to exit.");
                 Console.ReadKey();
+                Environment.Exit(errorcode);
             }
         }
 
@@ -78,7 +84,7 @@ namespace Yabber
         {
             Console.WriteLine($"Decompressing DCX: {Path.GetFileName(sourceFile)}...");
 
-            string sourceDir = Path.GetDirectoryName(sourceFile);
+            string sourceDir = new FileInfo(sourceFile).Directory.FullName;
             string outPath;
             if (sourceFile.EndsWith(".dcx"))
                 outPath = $"{sourceDir}\\{Path.GetFileNameWithoutExtension(sourceFile)}";
