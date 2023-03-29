@@ -1,10 +1,11 @@
 ﻿using SoulsFormats;
 using SoulsFormats.AC4;
 using System;
-using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 
 namespace Yabber
@@ -13,6 +14,9 @@ namespace Yabber
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
             if (args.Length == 0)
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -30,7 +34,8 @@ namespace Yabber
                 return;
             }
 
-            bool pause = false;
+            bool error = false;
+            int errorcode = 0;
 
             foreach (string path in args)
             {
@@ -41,38 +46,45 @@ namespace Yabber
 
                     void report(float value)
                     {
-                        int nextProgress = (int)Math.Ceiling(value * maxProgress);
-                        if (nextProgress > lastProgress)
-                        {
-                            for (int i = lastProgress; i < nextProgress; i++)
-                            {
-                                if (i == 0)
-                                    Console.Write('[');
-                                else if (i == maxProgress - 1)
-                                    Console.Write(']');
-                                else
-                                    Console.Write('=');
-                            }
-
-                            lastProgress = nextProgress;
-                        }
-                    }
-
-                    IProgress<float> progress = new Progress<float>(report);
+                        // int maxProgress = Console.WindowWidth - 1;
+                        // int lastProgress = 0;
+                        //
+                        // void report(float value)
+                        // {
+                        //     int nextProgress = (int)Math.Ceiling(value * maxProgress);
+                        //     if (nextProgress > lastProgress)
+                        //     {
+                        //         for (int i = lastProgress; i < nextProgress; i++)
+                        //         {
+                        //             if (i == 0)
+                        //                 Console.Write('[');
+                        //             else if (i == maxProgress - 1)
+                        //                 Console.Write(']');
+                        //             else
+                        //                 Console.Write('=');
+                        //         }
+                        //
+                        //         lastProgress = nextProgress;
+                        //     }
+                        // }
+                        //
+                        // IProgress<float> progress = new Progress<float>(report);
+                        IProgress<float> progress = new Progress<float>();
 
                     if (Directory.Exists(path))
                     {
-                        pause |= RepackDir(path, progress);
+                        error |= RepackDir(path, progress);
 
                     }
                     else if (File.Exists(path))
                     {
-                        pause |= UnpackFile(path, progress);
+                        error |= UnpackFile(path, progress);
                     }
                     else
                     {
-                        Console.WriteLine($"File or directory not found: {path}");
-                        pause = true;
+                        Console.Error.WriteLine($"ERROR: File or directory not found: {path}");
+                        errorcode = 2;
+                        error = true;
                     }
 
                     if (lastProgress > 0)
@@ -83,9 +95,10 @@ namespace Yabber
                 }
                 catch (DllNotFoundException ex) when (ex.Message.Contains("oo2core_6_win64.dll"))
                 {
-                    Console.WriteLine(
-                        "In order to decompress .dcx files from games, starting with Sekiro, you must copy ANY oo2core_6_win64.dll into Yabber's lib folder from a game that has it (hint: Elden Ring).");
-                    pause = true;
+                    Console.Error.WriteLine(
+                        "ERROR: oo2core_6_win64.dll not found. Please copy this library from the game directory to Yabber's directory.");
+                    errorcode = 3;
+                    error = true;
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -104,29 +117,34 @@ namespace Yabber
                 catch (FriendlyException ex)
                 {
                     Console.WriteLine();
-                    Console.WriteLine($"Error: {ex.Message}");
-                    pause = true;
+                    Console.Error.WriteLine($"ERROR: {ex.Message}");
+                    errorcode = 4;
+                    error = true;
                 }
-                //catch (Exception ex)
-                //{
-                //    Console.WriteLine();
-                //    Console.WriteLine($"Unhandled exception: {ex}");
-                //    pause = true;
-                //}
+                #if (!DEBUG)
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.Error.WriteLine($"ERROR: Unhandled exception: {ex}");
+                    errorcode = 1;
+                    error = true;
+                }
+                #endif
 
                 Console.WriteLine();
             }
 
-            if (pause)
+            if (error)
             {
                 Console.WriteLine("One or more errors were encountered and displayed above.\nPress any key to exit.");
                 Console.ReadKey();
+                Environment.Exit(errorcode);
             }
         }
 
         private static bool UnpackFile(string sourceFile, IProgress<float> progress)
         {
-            string sourceDir = Path.GetDirectoryName(sourceFile);
+            string sourceDir = new FileInfo(sourceFile).Directory.FullName;
             string fileName = Path.GetFileName(sourceFile);
             string targetDir = $"{sourceDir}\\{fileName.Replace('.', '-')}";
             if (File.Exists(targetDir))
@@ -457,26 +475,26 @@ namespace Yabber
         private static bool ReEncryptRegulationFile(string sourceName, string sourceDir, string targetDir, IProgress<float> progress)
         {
             XmlDocument xml = new XmlDocument();
-            xml.Load($"{sourceDir}\\_yabber-tpf.xml");
+            xml.Load($"{sourceDir}\\_yabber-bnd4.xml");
 
-            string filename = xml.SelectSingleNode("tpf/filename").InnerText;
-            string regFile = $"{sourceDir}\\{filename}";
+            string filename = xml.SelectSingleNode("bnd4/filename").InnerText;
+            string regFile = $"{targetDir}\\{filename}";
 
-            if (sourceName.Contains("regulation.bin"))
+            if (filename.Contains("regulation.bin"))
             {
                 BND4 bnd = BND4.Read(regFile);
                 SFUtil.EncryptERRegulation(regFile, bnd);
                 return false;
             }
 
-            if (sourceName.Contains("Data0"))
+            if (filename.Contains("Data0"))
             {
                 BND4 bnd = BND4.Read(regFile);
                 SFUtil.EncryptDS3Regulation(regFile, bnd);
                 return false;
             }
 
-            if (sourceName.Contains("enc_regulation.bnd.dcx"))
+            if (filename.Contains("enc_regulation.bnd.dcx"))
             {
                 if (!Confirm("DS2 files cannot be re-encrypted, yet, so re-packing this folder might ruin your encrypted bnd."))
                 {
