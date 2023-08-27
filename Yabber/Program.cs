@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Xml;
 
 namespace Yabber
@@ -336,8 +337,9 @@ namespace Yabber
             {
                 string oo2corePath = YBUtil.GetOodlePath();
                 if (oo2corePath == null)
+                {
                     throw;
-
+                }
                 IntPtr handle = Kernel32.LoadLibrary(oo2corePath);
                 byte[] bytes = DCX.Decompress(sourceFile, out compression);
                 Kernel32.FreeLibrary(handle);
@@ -492,7 +494,7 @@ namespace Yabber
                 return false;
             }
 
-            throw new InvalidOperationException("This state is unreachable. If your regulation bin is named correctly, please contact Nordgaren about this regulation.bin. Otherwise" +
+            throw new InvalidOperationException("This state is unreachable. If your regulation bin is named correctly, please contact Nordgaren about this regulation.bin. Otherwise " +
                 "make sure your bnd contains the original bnd name.");
         }
     }
