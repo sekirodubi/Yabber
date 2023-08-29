@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace Yabber
@@ -10,17 +11,31 @@ namespace Yabber
     {
         public static void WriteBinderFiles(BinderReader bnd, XmlWriter xw, string targetDir, IProgress<float> progress)
         {
+
+            string root = "";
+            if (Binder.HasNames(bnd.Format))
+            {
+                root = YBUtil.FindCommonRootPath(bnd.Files.Select(bndFile => bndFile.Name));
+
+                if (root != "")
+                {
+                    // If there is a common root path, add it to the XML so it can be used in repacking.
+                    xw.WriteElementString("root", root+"\\");
+                }
+
+            }
+
             xw.WriteStartElement("files");
             var pathCounts = new Dictionary<string, int>();
+
             for (int i = 0; i < bnd.Files.Count; i++)
             {
                 BinderFileHeader file = bnd.Files[i];
 
-                string root = "";
                 string path;
                 if (Binder.HasNames(bnd.Format))
                 {
-                    path = YBUtil.UnrootBNDPath(file.Name, out root);
+                    path = YBUtil.UnrootBNDPath(file.Name, root);
                 }
                 else if (Binder.HasIDs(bnd.Format))
                 {
@@ -36,9 +51,6 @@ namespace Yabber
 
                 if (Binder.HasIDs(bnd.Format))
                     xw.WriteElementString("id", file.ID.ToString());
-
-                if (root != "")
-                    xw.WriteElementString("root", root);
 
                 xw.WriteElementString("path", path);
 
@@ -68,7 +80,7 @@ namespace Yabber
             xw.WriteEndElement();
         }
 
-        public static void ReadBinderFiles(IBinder bnd, XmlNode filesNode, string sourceDir)
+        public static void ReadBinderFiles(IBinder bnd, XmlNode filesNode, string sourceDir, string root)
         {
             foreach (XmlNode fileNode in filesNode.SelectNodes("file"))
             {
@@ -77,7 +89,6 @@ namespace Yabber
 
                 string strFlags = fileNode.SelectSingleNode("flags")?.InnerText ?? "Flag1";
                 string strID = fileNode.SelectSingleNode("id")?.InnerText ?? "-1";
-                string root = fileNode.SelectSingleNode("root")?.InnerText ?? "";
                 string path = fileNode.SelectSingleNode("path").InnerText;
                 string suffix = fileNode.SelectSingleNode("suffix")?.InnerText ?? "";
                 string strCompression = fileNode.SelectSingleNode("compression_type")?.InnerText ?? DCX.Type.Zlib.ToString();

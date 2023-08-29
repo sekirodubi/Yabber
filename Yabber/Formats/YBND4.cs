@@ -37,6 +37,8 @@ namespace Yabber
             xml.Load($"{sourceDir}\\_yabber-bnd4.xml");
 
             string filename = xml.SelectSingleNode("bnd4/filename").InnerText;
+            var root = xml.SelectSingleNode("bnd4/root")?.InnerText ?? "";
+
             Enum.TryParse(xml.SelectSingleNode("bnd4/compression")?.InnerText ?? "None", out DCX.Type compression);
             bnd.Compression = compression;
 
@@ -48,7 +50,8 @@ namespace Yabber
             bnd.Extended = Convert.ToByte(xml.SelectSingleNode("bnd4/extended").InnerText, 16);
             bnd.Unk04 = bool.Parse(xml.SelectSingleNode("bnd4/unk04").InnerText);
             bnd.Unk05 = bool.Parse(xml.SelectSingleNode("bnd4/unk05").InnerText);
-            YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd4/files"), sourceDir);
+
+            YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd4/files"), sourceDir, root);
 
             string outPath = $"{targetDir}\\{filename}";
             YBUtil.Backup(outPath);

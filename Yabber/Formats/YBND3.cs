@@ -38,6 +38,8 @@ namespace Yabber
                 throw new FriendlyException("Missing filename tag.");
 
             string filename = xml.SelectSingleNode("bnd3/filename").InnerText;
+            string root = xml.SelectSingleNode("bnd3/root")?.InnerText ?? "";
+
             string strCompression = xml.SelectSingleNode("bnd3/compression")?.InnerText ?? "None";
             bnd.Version = xml.SelectSingleNode("bnd3/version")?.InnerText ?? "07D7R6";
             string strFormat = xml.SelectSingleNode("bnd3/format")?.InnerText ?? "IDs, Names1, Names2, Compression";
@@ -76,7 +78,7 @@ namespace Yabber
             }
 
             if (xml.SelectSingleNode("bnd3/files") != null)
-                YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd3/files"), sourceDir);
+                YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd3/files"), sourceDir, root);
 
             string outPath = $"{targetDir}\\{filename}";
             YBUtil.Backup(outPath);
